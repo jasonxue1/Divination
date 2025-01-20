@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博占卜</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>赛博占卜</h1>
+
+        <div class="form-item">
+            <label for="name">请输入你的名字：</label>
+            <input type="text" id="name" placeholder="请输入你的名字">
+        </div>
+
+        <div class="form-item">
+            <label for="birthdate">请输入你的出生日期：</label>
+            <input type="date" id="birthdate">
+        </div>
+
+        <div class="form-item">
+            <label for="color">请选择你的幸运颜色：</label>
+            <select id="color">
+                <option value="red">红色</option>
+                <option value="blue">蓝色</option>
+                <option value="green">绿色</option>
+                <option value="yellow">黄色</option>
+                <option value="black">黑色</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label for="number">选择一个幸运数字 (1-10)：</label>
+            <input type="number" id="number" min="1" max="10">
+        </div>
+
+        <button onclick="getFortune()">占卜</button>
+
+        <p id="fortune-result"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
