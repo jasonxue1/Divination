@@ -1,3 +1,13 @@
+// 引入加密模块，用于生成 SHA-256 哈希
+function sha256(message) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(message))
+        .then(hashBuffer => {
+            let hashArray = Array.from(new Uint8Array(hashBuffer));
+            let hashHex = hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+            return hashHex;
+        });
+}
+
 // 加载算命内容
 async function loadFortuneContent() {
     const response = await fetch('fortune-content.json');
@@ -18,29 +28,41 @@ async function getFortune() {
         return;
     }
 
-    // 获取当前时间（小时、星期几）
-    const currentDate = new Date();
-    const currentHour = currentDate.getHours(); // 当前小时
-    const currentDay = currentDate.getDay(); // 当前星期几
+    // 获取今天的日期
+    const today = new Date();
+    const todayDate = today.toISOString().split('T')[0]; // 只取日期部分 (yyyy-mm-dd)
+
+    // 拼接所有输入项和今天的日期
+    const combinedString = name + birthdate + color + number + todayDate;
+
+    // 生成该拼接字符串的 SHA-256 哈希
+    const combinedHash = await sha256(combinedString);
+
+    // 将哈希值转换为数字，并确保能够生成32个结果
+    const hashIndex = parseInt(combinedHash.slice(0, 2), 16);
 
     // 加载算命内容
     const fortuneData = await loadFortuneContent();
-    
-    // 结合用户输入和当前时间来生成算命结果
-    const month = new Date(birthdate).getMonth();
-    const fortuneIndex = (month + number + currentDay) % fortuneData.fortunes.length;
 
+    // 根据哈希值计算索引并选择算命内容（确保有32个结果）
+    const fortuneIndex = hashIndex % fortuneData.fortunes.length;
+
+    // 获取第一句：来自 fortune-content.json
     let fortuneMessage = fortuneData.fortunes[fortuneIndex];
 
-    // 根据当前时间添加更多个性化内容
+    // 获取当前时间（小时）
+    const currentHour = today.getHours();
+
+    // 获取第二句：根据时间
+    let timeMessage;
     if (currentHour >= 6 && currentHour < 12) {
-        fortuneMessage += " 早晨的阳光照亮了你的未来，今天是一个充满活力的一天！";
+        timeMessage = "早晨的阳光照亮了你的未来，今天是一个充满活力的一天！";
     } else if (currentHour >= 12 && currentHour < 18) {
-        fortuneMessage += " 下午的时光提醒你要多思考和积累，未来的成就来源于当下的努力！";
+        timeMessage = "下午的时光提醒你要多思考和积累，未来的成就来源于当下的努力！";
     } else {
-        fortuneMessage += " 夜晚来临时，记得放松心情，调整状态，为明天的挑战做好准备。";
+        timeMessage = "夜晚来临时，记得放松心情，调整状态，为明天的挑战做好准备。";
     }
 
-    // 显示算命结果
-    document.getElementById("fortune-result").textContent = fortuneMessage;
+    // 输出结果：第一句 + 第二句
+    document.getElementById("fortune-result").innerHTML = fortuneMessage + "<br><br>" + timeMessage;
 }

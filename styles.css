@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f8ff;
-    text-align: center;
+    text-align: center;  /* Centered overall content */
     padding: 50px;
 }
 
@@ -35,8 +35,15 @@ button:hover {
     background-color: #45a049;
 }
 
+/* Make sure fortune result is left aligned */
 #fortune-result {
     margin-top: 20px;
     font-size: 1.2em;
     color: #333;
+    text-align: left;  /* Left align the text */
+    width: 80%;        /* Ensure it fits within the container */
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;  /* Ensure spacing between lines */
+    white-space: pre-line; /* Allow line breaks in text */
 }
